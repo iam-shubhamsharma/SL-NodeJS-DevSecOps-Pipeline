@@ -1,5 +1,4 @@
 version: 0.2
-
 env:
   variables:
     ZAP_REPORT_FILE: zap_report.html
