@@ -30,7 +30,7 @@ phases:
 
   pre_build:
     commands:
-      - echo Running Snyk SCA & SAST tests...
+      - echo "Running Snyk SCA & SAST tests..."
       - snyk test --all-projects --json > $SNYK_REPORT_FILE
       - snyk monitor
 
