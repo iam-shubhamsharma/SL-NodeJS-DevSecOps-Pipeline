@@ -1,28 +1,48 @@
-# buildspec.yaml
 version: 0.2
 
+env:
+  variables:
+    ZAP_REPORT_FILE: zap_report.html
+    SNYK_REPORT_FILE: snyk_report.json
+    TARGET_URL: http://localhost:3000   # Change this if using a deployed URL
+    S3_BUCKET: "odejs-bucket764764"     # Replace with your S3 bucket name
+  secrets-manager:
+    SNYK_TOKEN: "31c1872f-77af-42de-8f20-89932dbd6914"            # Replace with your Snyk token secret path if using Secrets Manager
+
 phases:
-  build:
+  install:
+    runtime-versions:
+      nodejs: 16
     commands:
-      # install the latest Snyk CLI from GitHub Releases
-      - latest_version=$(curl -Is "https://github.com/snyk/cli/releases/latest" | grep "^location" | sed 's#.*tag/##g' | tr -d "\r")
-      - snyk_cli_dl_linux="https://github.com/snyk/cli/releases/download/${latest_version}/snyk-linux"
-      - curl -Lo /usr/local/bin/snyk $snyk_cli_dl_linux
-      - chmod +x /usr/local/bin/snyk
-      
-      # authenticate the Snyk CLI
-      - snyk auth 31c1872f-77af-42de-8f20-89932dbd6914
-      
-      # perform a Snyk SCA scan; continue if vulnerabilities are found
-      - snyk test || true
-      
-      # upload a snapshot of the project to Snyk for continuous monitoring
+      - echo Installing dependencies...
+      - npm install
+      - echo Installing Snyk CLI...
+      - npm install -g snyk
+      - snyk auth $SNYK_TOKEN
+      - echo Installing Docker for OWASP ZAP...
+      - yum update -y
+      - yum install -y docker
+      - service docker start
+
+  pre_build:
+    commands:
+      - echo Running Snyk SCA & SAST tests...
+      - snyk test --all-projects --json > $SNYK_REPORT_FILE
       - snyk monitor
 
-      - echo "Build complete"
+  build:
+    commands:
+      - echo Starting OWASP ZAP DAST scan...
+      - docker pull owasp/zap2docker-stable
+      - docker run -v $(pwd):/zap/wrk/:rw -t owasp/zap2docker-stable zap-baseline.py -t $TARGET_URL -r $ZAP_REPORT_FILE
+
   post_build:
     commands:
-      - aws s3 cp snyk.json s3://nodejs-bucket764764/reports/snyk.json
+      - echo Uploading reports to S3...
+      - aws s3 cp $SNYK_REPORT_FILE s3://$S3_BUCKET/reports/$SNYK_REPORT_FILE
+      - aws s3 cp $ZAP_REPORT_FILE s3://$S3_BUCKET/reports/$ZAP_REPORT_FILE
+      - echo Build and security scanning completed.
+
 artifacts:
   files:
     - '**/*'
