@@ -5,7 +5,7 @@ env:
     ZAP_REPORT_FILE: zap_report.html
     SNYK_REPORT_FILE: snyk_report.json
     TARGET_URL: http://localhost:3000   # Change this if using a deployed URL
-    S3_BUCKET: "odejs-bucket764764"     # Replace with your S3 bucket name
+    S3_BUCKET: "nodejs-bucket764764"     # Replace with your S3 bucket name
   secrets-manager:
     SNYK_TOKEN: "31c1872f-77af-42de-8f20-89932dbd6914"            # Replace with your Snyk token secret path if using Secrets Manager
 
