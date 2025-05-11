@@ -20,9 +20,9 @@ phases:
       - snyk monitor
 
       - echo "Build complete"
+  post_build:
+    commands:
+      - aws s3 cp snyk.json s3://nodejs-bucket764764/reports/snyk.json
 artifacts:
   files:
     - '**/*'
-  post_build:
-    commands:
-      - aws s3 cp snyk.json s3:/nodejs-bucket764764/reports/snyk.json
