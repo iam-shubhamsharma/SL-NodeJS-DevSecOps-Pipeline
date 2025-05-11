@@ -14,15 +14,21 @@ phases:
     runtime-versions:
       nodejs: 16
     commands:
+      - sudo apt-update
       - echo Installing dependencies...
-      - npm install
+      - sudo apt install npm
+      
       - echo Installing Snyk CLI...
-      - npm install -g snyk
+      -  # install the latest Snyk CLI from GitHub Releases
+      - latest_version=$(curl -Is "https://github.com/snyk/cli/releases/latest" | grep "^location" | sed 's#.*tag/##g' | tr -d "\r")
+      - snyk_cli_dl_linux="https://github.com/snyk/cli/releases/download/${latest_version}/snyk-linux"
+      - curl -Lo /usr/local/bin/snyk $snyk_cli_dl_linux
+      - chmod +x /usr/local/bin/snyk
       - snyk auth $SNYK_TOKEN
+      
       - echo Installing Docker for OWASP ZAP...
-      - yum update -y
-      - yum install -y docker
-      - service docker start
+      - sudo apt install -y docker.io
+      - sudo service docker start
 
   pre_build:
     commands:
