@@ -24,7 +24,7 @@ phases:
       - snyk auth $SNYK_TOKEN
       
       - echo Installing Docker for OWASP ZAP...
-      - yum update -y
+      # yum update -y
       - yum install -y docker
       - service docker start
 
