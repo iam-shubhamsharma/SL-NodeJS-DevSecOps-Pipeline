@@ -18,3 +18,11 @@ phases:
       
       # upload a snapshot of the project to Snyk for continuous monitoring
       - snyk monitor
+
+      - echo "Build complete"
+artifacts:
+  files:
+    - '**/*'
+  post_build:
+    commands:
+      - aws s3 cp snyk.json s3:/nodejs-bucket764764/reports/snyk.json
