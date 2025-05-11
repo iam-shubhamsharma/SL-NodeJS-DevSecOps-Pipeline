@@ -14,9 +14,8 @@ phases:
     runtime-versions:
       nodejs: 16
     commands:
-      - sudo apt-update
       - echo Installing dependencies...
-      - sudo apt install npm
+      - npm install
       
       - echo Installing Snyk CLI...
       -  # install the latest Snyk CLI from GitHub Releases
@@ -27,8 +26,9 @@ phases:
       - snyk auth $SNYK_TOKEN
       
       - echo Installing Docker for OWASP ZAP...
-      - sudo apt install -y docker.io
-      - sudo service docker start
+      - yum update -y
+      - yum install -y docker
+      - service docker start
 
   pre_build:
     commands:
