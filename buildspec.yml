@@ -12,10 +12,10 @@ phases:
     runtime-versions:
       nodejs: 16
     commands:
-      - echo Installing dependencies...
+      - echo "Installing dependencies..."
       - npm install
       
-      - echo Installing Snyk CLI...
+      - echo "Installing Snyk CLI..."
       # install the latest Snyk CLI from GitHub Releases
       - latest_version=$(curl -Is "https://github.com/snyk/cli/releases/latest" | grep "^location" | sed 's#.*tag/##g' | tr -d "\r")
       - snyk_cli_dl_linux="https://github.com/snyk/cli/releases/download/${latest_version}/snyk-linux"
@@ -23,7 +23,7 @@ phases:
       - chmod +x /usr/local/bin/snyk
       - snyk auth $SNYK_TOKEN
       
-      - echo Installing Docker for OWASP ZAP...
+      - echo "Installing Docker for OWASP ZAP..."
       # yum update -y
       - yum install -y docker
       - service docker start
@@ -36,16 +36,16 @@ phases:
 
   build:
     commands:
-      - echo Starting OWASP ZAP DAST scan...
+      - echo "Starting OWASP ZAP DAST scan..."
       - docker pull zaproxy/zap-stable
-      - docker run -v $(pwd):/zap/wrk/:rw -t owasp/zap2docker-stable zap-baseline.py -t $TARGET_URL -r $ZAP_REPORT_FILE
+      - docker run -v $(pwd):/zap/wrk/:rw -t zaproxy/zap-stable zap-baseline.py -t $TARGET_URL -r $ZAP_REPORT_FILE
 
   post_build:
     commands:
-      - echo Uploading reports to S3...
+      - echo "Uploading reports to S3..."
       - aws s3 cp $SNYK_REPORT_FILE s3://$S3_BUCKET/reports/$SNYK_REPORT_FILE
       - aws s3 cp $ZAP_REPORT_FILE s3://$S3_BUCKET/reports/$ZAP_REPORT_FILE
-      - echo Build and security scanning completed.
+      - echo "Build and security scanning completed."
 
 artifacts:
   files:
