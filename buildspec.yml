@@ -40,10 +40,11 @@ phases:
       - nohup npm start &> app.log &
       - echo "Waiting for app to boot..."
       - sleep 10
+      - curl -I http://localhost:3000 || echo "App still not responding"
       
       - echo "Starting OWASP ZAP DAST scan..."
       - docker pull zaproxy/zap-stable
-      - docker run -v /tmp:/zap/wrk/:rw -t zaproxy/zap-stable zap-baseline.py -t $TARGET_URL -r $ZAP_REPORT_FILE || true
+      - docker run --rm -u 0 -v /tmp:/zap/wrk/:rw -t zaproxy/zap-stable zap-baseline.py -t $TARGET_URL -r $ZAP_REPORT_FILE -d || true
 
   post_build:
     commands:
