@@ -52,7 +52,7 @@ phases:
     commands:
       - echo "Uploading reports to S3..."
       - aws s3 cp $SNYK_REPORT_FILE s3://$S3_BUCKET/reports/$SNYK_REPORT_FILE
-      - aws s3 cp $ZAP_REPORT_FILE s3://$S3_BUCKET/reports/$ZAP_REPORT_FILE
+      - aws s3 cp /tmp/$ZAP_REPORT_FILE s3://$S3_BUCKET/reports/$ZAP_REPORT_FILE
       - echo "Build and security scanning completed."
 
 artifacts:
