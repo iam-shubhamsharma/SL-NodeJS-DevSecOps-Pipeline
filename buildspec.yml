@@ -46,7 +46,7 @@ phases:
       
       - echo "Starting OWASP ZAP DAST scan..."
       - docker pull zaproxy/zap-stable
-      - docker run --rm -u 0 -v /tmp:/zap/wrk/:rw -t zaproxy/zap-stable zap-baseline.py -t $TARGET_URL -r $ZAP_REPORT_FILE -d || true
+      - docker run --rm -u 0 -v /tmp:/zap/wrk/:rw -t zaproxy/zap-stable zap-baseline.py -t $TARGET_URL -r $ZAP_REPORT_FILE -d || echo "ZAP scan failed"
       - echo "Listing /tmp directory contents to check if the report was generated:"
       - ls -l /tmp
 
