@@ -41,7 +41,6 @@ phases:
     commands:
       - echo "Starting NodeJS application locally for ZAP scanning..."
       - nohup npm start &> app.log &
-      - node app --location Newcastle
       - echo "Waiting for app to boot..."
       - sleep 40
       - curl -I http://127.0.0.1:3000 || echo "App still not responding"
