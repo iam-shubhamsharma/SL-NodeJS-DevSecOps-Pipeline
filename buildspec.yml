@@ -26,7 +26,10 @@ phases:
       - echo "Installing Docker for OWASP ZAP..."
       # yum update -y
       - yum install -y docker
-      - service docker start
+      - systemctl start docker
+      - systemctl enable docker
+      - docker info
+      - docker version
 
   pre_build:
     commands:
