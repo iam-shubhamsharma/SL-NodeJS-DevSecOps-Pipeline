@@ -26,8 +26,7 @@ phases:
       - echo "Installing Docker for OWASP ZAP..."
       # yum update -y
       - yum install -y docker
-      - systemctl start docker
-      - systemctl enable docker
+      - nohup dockerd &
       - docker info
       - docker version
 
