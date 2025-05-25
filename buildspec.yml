@@ -41,14 +41,18 @@ phases:
       - echo "Starting NodeJS application locally for ZAP scanning..."
       - nohup npm start &> app.log &
       - echo "Waiting for app to boot..."
-      - sleep 20
+      - sleep 40
       - curl -I http://127.0.0.1:3000 || echo "App still not responding"
       
+      - echo "Checking app logs for confirmation..."
+      - tail -n 20 app.log 
+
       - echo "Starting OWASP ZAP DAST scan..."
       - docker pull zaproxy/zap-stable
-      - docker run --rm -u 0 -v /tmp:/zap/wrk/:rw -t zaproxy/zap-stable zap-baseline.py -t $TARGET_URL -r $ZAP_REPORT_FILE -d || echo "ZAP scan failed"
+      - docker run --rm -u 0 -v /tmp:/zap/wrk/:rw -t zaproxy/zap-stable zap-baseline.py -t $TARGET_URL -r /zap/wrk/$ZAP_REPORT_FILE -d || echo "ZAP scan failed"
       - echo "Listing /tmp directory contents to check if the report was generated:"
       - ls -l /tmp
+      - echo "Check if ZAP scan completed successfully."
 
   post_build:
     commands:
