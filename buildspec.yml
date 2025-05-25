@@ -14,6 +14,7 @@ phases:
     commands:
       - echo "Installing dependencies..."
       - npm install
+      - npm install commander
       
       - echo "Installing Snyk CLI..."
       # install the latest Snyk CLI from GitHub Releases
