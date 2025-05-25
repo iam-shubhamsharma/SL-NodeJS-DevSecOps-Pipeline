@@ -39,7 +39,7 @@ phases:
       - echo "Starting NodeJS application locally for ZAP scanning..."
       - nohup npm start &> app.log &
       - echo "Waiting for app to boot..."
-      - sleep 10
+      - sleep 20
       - curl -I http://127.0.0.1:3000 || echo "App still not responding"
       
       - echo "Starting OWASP ZAP DAST scan..."
